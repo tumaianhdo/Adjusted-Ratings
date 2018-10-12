@@ -1,0 +1,23 @@
+{
+    "numberReviews": 1000,
+    "averages": {
+        "score": 0.2931,
+        "magnitude": 4.9751
+    },
+    "stdev": {
+        "score": 0.3857,
+        "magnitude": 4.1444
+    },
+    "median": {
+        "score": 0.3,
+        "magnitude": 3.7
+    },
+    "max": {
+        "score": 0.9,
+        "magnitude": 26.6
+    },
+    "min": {
+        "score": -0.9,
+        "magnitude": 0.0
+    }
+}

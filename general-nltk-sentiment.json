@@ -1,0 +1,33 @@
+{
+    "numberReviews": 1000,
+    "averages": {
+        "negative": 0.0446,
+        "neutral": 0.7552,
+        "positive": 0.2002,
+        "compound": 0.6842
+    },
+    "stdev": {
+        "negative": 0.0521,
+        "neutral": 0.0985,
+        "positive": 0.1107,
+        "compound": 0.5138
+    },
+    "median": {
+        "negative": 0.031,
+        "neutral": 0.764,
+        "positive": 0.183,
+        "compound": 0.9223
+    },
+    "max": {
+        "negative": 0.31,
+        "neutral": 1.0,
+        "positive": 0.635,
+        "compound": 0.9994
+    },
+    "min": {
+        "negative": 0.0,
+        "neutral": 0.365,
+        "positive": 0.0,
+        "compound": -0.9937
+    }
+}
