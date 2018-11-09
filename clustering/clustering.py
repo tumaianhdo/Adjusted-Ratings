@@ -6,6 +6,7 @@ from math import sqrt
 from pyspark.sql import SparkSession
 from pyspark.mllib.clustering import KMeans, KMeansModel
 import matplotlib.pyplot as plt
+import json
 
 
 def list_ratings(lists, count):
@@ -24,11 +25,11 @@ if __name__ == "__main__":
 	 data_sentiment = spark.read.json("./google_results.json", multiLine=True)
 	 data_sentiment_rdd = data_sentiment.select('user_id','business_id','sentiment-google').rdd.map(tuple)
 
-	 # data_normalized = spark.read.json("./user_normalizedStars.json", multiLine=True)
-	 # data_normalized_rdd = data_normalized.select('user_id', 'business_id', 'Adj_Stars').rdd.map(tuple)
+	 data_normalized = spark.read.json("./user_normalizedStars.json", multiLine=True)
+	 data_normalized_rdd = data_normalized.select('user_id', 'business_id', 'Adj_Stars').rdd.map(tuple)
 
-	 data_normalized = spark.read.json("./thousand.json", multiLine=True)
-	 data_normalized_rdd = data_normalized.select('user_id', 'business_id', 'stars').rdd.map(tuple)
+	 # data_normalized = spark.read.json("./thousand.json", multiLine=True)
+	 # data_normalized_rdd = data_normalized.select('user_id', 'business_id', 'stars').rdd.map(tuple)
 
 	 data_sentiment_refined = data_sentiment_rdd.map(lambda (user, business, star): ((user, business), star))
 	 data_normalized_refined = data_normalized_rdd.map(lambda (user, business, star): ((user, business), star))
@@ -70,16 +71,23 @@ if __name__ == "__main__":
 	# plt.show()	
 
 	 num_clusters = 5
-	 clusters = KMeans.train(user_stars.map(lambda (user, star_array): star_array), num_clusters, maxIterations=20, initializationMode="random")
+	 clusters = KMeans.train(user_stars.map(lambda (user, star_array): star_array), num_clusters, maxIterations=50, initializationMode="k-means||")
 
 	 predict_data = user_stars.map(lambda (user, stars): (clusters.predict(stars), user))
 	 predict_count = predict_data.map(lambda (cluser, user): (cluser, 1)).reduceByKey(lambda x,y: x+y)
 	 cluster_user = predict_data.map(lambda (cluster, user): (cluster, reverse_user_bc.value[user])).groupByKey().mapValues(list)
+	 result_data = predict_count.join(cluster_user).map(lambda (cluster, attributes): (cluster,{"size": attributes[0], "user": attributes[1]}))
+
+	 # a=cluster_user.map(json.loads).coalesce(1, shuffle=True)
+	 # b=a.map(json.dumps)
+	 # c= b.reduce(lambda x, y: x + "\n" + y)
+	 with open("./result.json", "w") as f:
+	 	json.dump(result_data.collectAsMap(),f)
 
 	 for x in predict_count.collect():
 	 	print(x)
-	 for x in cluster_user.collect():
-	 	print(x)
+	 # for x in cluster_user.collect():
+	 # 	print(x)
 	 
 
 
