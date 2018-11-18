@@ -86,34 +86,35 @@ if __name__ == "__main__":
 	print("K-means Clustering Cost = " + str(cost))
 
 	
-	# predict_count = predict_data.map(lambda (cluser, user): (cluser, 1)).reduceByKey(lambda x,y: x+y)
-	# for x in predict_count.collect():
-	# 	print(x)
+	predict_count = predict_data.map(lambda (cluser, user): (cluser, 1)).reduceByKey(lambda x,y: x+y)
+	for x in predict_count.collect():
+		print(x)
 
 	
 
-	# star_mat = RowMatrix(star_arrays)
-	# pca = star_mat.computePrincipalComponents(2)
-	# projected_stars = star_mat.multiply(pca).rows
-	# # for x in projected_stars.collect():
-	# # 	print(x) 
+	star_mat = RowMatrix(star_arrays)
+	pca = star_mat.computePrincipalComponents(2)
+	projected_stars = star_mat.multiply(pca).rows
+	# for x in projected_stars.collect():
+	# 	print(x) 
 
-	# indexes_projected_stars = projected_stars.zipWithIndex().map(lambda (coordinates, index): (index, coordinates))
+	
 
 	clustered_stars = clusters.predict(star_arrays)
 	cluster_counts = clustered_stars.map(lambda cluster: (cluster, 1)).reduceByKey(lambda x, y: x + y)
 	for x in cluster_counts.collect():
 		print(x)
 
-	# indexes_clustered_stars = clustered_stars.zipWithIndex().map(lambda (cluster, index) : (index, cluster))
-	# projected_stars_clusters = indexes_projected_stars.join(indexes_clustered_stars).map(lambda (index, (coordinates, cluster)) : (cluster, coordinates))
-	# clusters_coordinates = projected_stars_clusters.collect()
+	indexes_projected_stars = projected_stars.zipWithIndex().map(lambda (coordinates, index): (index, coordinates))
+	indexes_clustered_stars = clustered_stars.zipWithIndex().map(lambda (cluster, index) : (index, cluster))
+	projected_stars_clusters = indexes_projected_stars.join(indexes_clustered_stars).map(lambda (index, (coordinates, cluster)) : (cluster, coordinates))
+	clusters_coordinates = projected_stars_clusters.collect()
 
-	# for c in range(num_clusters):
-	# 	group = filter(lambda (cluster, coordinates) : cluster == c, clusters_coordinates)
-	# 	plt.plot(map(lambda (cluster, coordinates): coordinates[0], group), map(lambda (cluster, coordinates): coordinates[1], group),'o')
+	for c in range(num_clusters):
+		group = filter(lambda (cluster, coordinates) : cluster == c, clusters_coordinates)
+		plt.plot(map(lambda (cluster, coordinates): coordinates[0], group), map(lambda (cluster, coordinates): coordinates[1], group),'o')
 	
-	# plt.show()	
+	plt.show()	
 
 	predict_data = user_stars.map(lambda (user, stars): (clusters.predict(stars), user))
 	cluster_users = predict_data.map(lambda (cluster, user): (cluster, reverse_user_bc.value[user])).groupByKey().mapValues(list)
