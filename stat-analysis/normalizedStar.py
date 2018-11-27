@@ -14,6 +14,9 @@ import time
 def normalizeValue(minVal, maxVal, val):
     rangeVal = maxVal - minVal
     return (val - minVal) / rangeVal
+  
+def normalizeValueDist(star, tscore):
+    return 3 + (star-3)/1.5 + tscore/3
 
 def buckets(user, val):
     if val == 1:
@@ -79,13 +82,25 @@ def getNormalizeStars(dfSent):
   t0 = time.clock()
   rddStart = dfSent.rdd
   rddSent = rddStart.map(lambda row: (row['user_id'], row['stars'], row['sentiment-google'], row['review_id']))
-  rddRanges = rddSent.map(lambda row: (row[1], (row[2], row[2]))).reduceByKey(lambda x1, x2: (min(x1[0], x2[0]), max(x1[1], x2[1])))
-  rangeMap = rddRanges.sortByKey().collectAsMap()
   
   ''' ***** Get expanded star ratings using sentiment, summary stats ***** '''
   print('***** Get expanded star ratings using sentiment, summary stats *****')
+  
+  # (star: mean sentiment)
+  meanMap = rddSent.map(lambda x: (x[1], (x[2], 1))) \
+      .reduceByKey(lambda sumCnt1, sumCnt2: (sumCnt1[0]+sumCnt2[0], sumCnt1[1]+sumCnt2[1])) \
+      .map(lambda sumCnt: (sumCnt[0], sumCnt[1][0]/sumCnt[1][1])).collectAsMap() 
+  
+  # (star: std dev sentiment)
+  stdMap = rddSent.map(lambda x: (x[1], ((x[2] - meanMap[x[1]])**2,1) ) ) \
+      .reduceByKey(lambda sumCnt1, sumCnt2: (sumCnt1[0]+sumCnt2[0], sumCnt1[1]+sumCnt2[1])) \
+      .map(lambda sumCnt: (sumCnt[0], SampleStDev(sumCnt[1][0],sumCnt[1][1]) )).collectAsMap()
+  
+  # (review_id: t-score sentiment)
+  tscoreStar = rddSent.map(lambda x: (x[3], TScore(x[2],meanMap[x[1]],stdMap[x[1]]) ) ).collectAsMap()
+  
   # (user_id, expanded star using sentiment, review_id, stars)
-  rddSentStars = rddSent.map(lambda row: (row[0], row[1]-0.5+normalizeValue(rangeMap[row[1]][0],rangeMap[row[1]][1],row[2]), \
+  rddSentStars = rddSent.map(lambda row: (row[0], normalizeValueDist(row[1], tscoreStar[row[3]]), \
                                           row[3], row[1]))
   
   # review count, mean by user_id
