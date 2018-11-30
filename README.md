@@ -14,6 +14,7 @@ K-Means is planned to use to cluster the users based on the new adjusted stars a
 ## Recommendation Systems
 
 ## Visualization
+We created a scatter plot to visualize and at same time evaluate our new rating systems. This approach is based on observing the difference of the stars from user average and business average values. 
 
 ## Authors 
 * Justyn Lee - justynle@usc.edu
