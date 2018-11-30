@@ -1,0 +1,77 @@
+600K Set
+-----------------
+
+ADJ # OF ERR < 1
+45748
+STAR # OF ERR < 1
+37138
+INTERSECTION
+27693
+
+INTERSECTION/STAR = .7457
+INTERSECTION/ADJ = .6053
+
+TOTAL NEW RECOMMENDATIONS =
+45748 * (1-.6053) = 18057
+
+# REC BEFORE = 37,138
+# RECS NOW = 37,138 + 18,057 = 55,195
+
+ADJ
+>=0 and <1: 46313
+>=1 and <2: 20954
+>=2 and <3: 8766
+>=3 and <4: 3791
+>=4: 2502
+Root Mean Squared Error: 1.6408550793990515
+Time: 39
+
+
+STAR
+>=0 and <1: 37708
+>=1 and <2: 16623
+>=2 and <3: 9925
+>=3 and <4: 6473
+>=4: 11597
+Root Mean Squared Error: 2.7707969378538575
+Time: 38
+
+
+10,000 Set
+----------
+
+Star
+>=0 and <1: 31
+>=1 and <2: 24
+>=2 and <3: 26
+>=3 and <4: 35
+>=4: 79
+Root Mean Squared Error: 4.292989319920665
+
+
+
+ADJ
+>=0 and <1: 37
+>=1 and <2: 46
+>=2 and <3: 37
+>=3 and <4: 39
+>=4: 36
+Root Mean Squared Error: 2.9202545632034793
+Time: 14
+
+ADJ LENGTH
+37
+STAR LENGTH
+31
+INTERSECTION
+11
+
+ 
+INTERSECTION/STAR = 11/31 = 0.3548
+INTERSECTION/ADJ = 11/37 = 0.2973
+
+TOTAL NEW RECOMMENDATIONS =
+37 * (1-0.2973) = 26
+
+# REC BEFORE = 31
+# RECS NOW = 31 + 26 = 57
