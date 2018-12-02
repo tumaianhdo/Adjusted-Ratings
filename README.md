@@ -2,6 +2,9 @@
 This repository is the project on "Yelp Recommendation Based on Aggregated Ratings from Sentiment and Stars" in class 
 INF-553 at University of Southern California (USC). Our work attempts to combine the sentiment scores from the text content as well as their star ratings in order to create a new normalized rating value. This new rating will then be used in a collaborative filtering recommendation system which will be proven to recommend businesses that the previous system on solely stars would not.
 
+## Dataset Extraction
+Scripts to pull information from the entire yelp review dataset
+
 ## Sentiment Analysis
 We ran various sentiment analysis algorithms over the set and compared the results given to select on one. After seleciton, a new script was used to process sentiment in batches.
 
